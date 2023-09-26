@@ -1,0 +1,33 @@
+import React from 'react'
+import { useWorkoutsContext } from '../hooks/useWorkoutsContext'
+import { BsTrash3 } from 'react-icons/bs'
+
+//date fns
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+
+const WorkoutDetails = ({workout}) => {
+  const { dispatch } = useWorkoutsContext()
+
+  const handleClick = async () =>{
+    const response = await fetch('/api/workout/' + workout._id, {
+      method: 'DELETE'
+    })
+    const json = await response.json()
+
+    if (response.ok){
+      dispatch({type: 'DELETE_WORKOUT', payload: json})
+    }
+  }
+
+  return (
+    <div className="workout-details">
+        <h4>{workout.title}</h4>
+        <p><strong>Load (kg):</strong>{workout.loads}</p>
+        <p><strong>Reps:</strong>{workout.reps}</p>
+        <p>{formatDistanceToNow(new Date(workout.createdAt), { addSuffix: true})}</p>
+        <span onClick={handleClick}><BsTrash3 /></span>
+    </div>
+  )
+}
+
+export default WorkoutDetails
